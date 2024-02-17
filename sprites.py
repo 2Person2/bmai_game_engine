@@ -6,7 +6,7 @@ from pygame.sprite import Sprite
 from settings import *
 
 #create a player class
-class Player(Sprite):
+class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         Sprite.__init__(self, self.groups)
@@ -17,6 +17,7 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+        self.speed = PLAYER_SPEED
 
     # def move(self, dx=0, dy=0):
     #     self.x += dx
@@ -26,13 +27,13 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.vx = -PLAYER_SPEED
+            self.vx = -self.speed
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.vx = PLAYER_SPEED
+            self.vx = self.speed
         if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vy = -PLAYER_SPEED
+            self.vy = -self.speed
         if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vy = PLAYER_SPEED
+            self.vy = self.speed
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071
             self.vy *= 0.7071
@@ -55,10 +56,12 @@ class Player(Sprite):
                     self.y = hits[0].rect.bottom
                 self.vy = 0
                 self.rect.y = self.y
-    def collide_with_pu(self, group, kill):
-        hits = pg.sprite.spritecollide(self. group, kill)
+    #collision with powerup
+    def collide_with_group(self, group, kill):
+        hits = pg.sprite.spritecollide(self, group, kill)
         if hits:
-            pass
+            if str(hits[0].__class__.__name__) == "PowerUp":
+                self.speed += 200
 
 
     def update(self):
@@ -68,14 +71,15 @@ class Player(Sprite):
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
-        # add x collision later
+        #x collision
         self.collide_with_walls('x')
         self.rect.y = self.y
-        # add y collision later
+        # y collision
         self.collide_with_walls('y')
+        self.collide_with_group(self.game.power_ups, True)
 
 #create a wall class
-class Wall(Sprite):
+class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.walls
         Sprite.__init__(self, self.groups)
@@ -88,9 +92,8 @@ class Wall(Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
-class PowerUp(Sprite):
+class PowerUp(pg.sprite.Sprite):
     def __init__(self, game, x, y):
-        # add powerup groups later....
         self.groups = game.all_sprites, game.power_ups
         Sprite.__init__(self, self.groups)
         self.game = game
