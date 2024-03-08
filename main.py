@@ -1,6 +1,9 @@
 # This file was created by: Brandon Mai
 # my first source control edit
 # importing libraries
+
+# Goals: waves of enemies, weapons, currency
+
 import pygame as pg
 import sys
 from settings import *
@@ -22,6 +25,9 @@ class Game:
     # load save game data
     def load_data(self):
         game_folder = path.dirname(__file__)
+        # added image
+        img_folder = path.join(game_folder, 'images')
+        self.player_img = pg.image.load(path.join(img_folder, 'eagle.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
