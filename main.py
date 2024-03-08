@@ -27,7 +27,7 @@ class Game:
         game_folder = path.dirname(__file__)
         # added image
         img_folder = path.join(game_folder, 'images')
-        self.player_img = pg.image.load(path.join(img_folder, 'eagle.png')).convert_alpha()
+        self.player_img = pg.image.load(path.join(img_folder, 'dragon.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
@@ -40,6 +40,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.power_ups = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
         # self.player = Player(self, 10, 10)
         # for x in range(10, 20):
         #     Wall(self, x, 5)
@@ -53,6 +54,8 @@ class Game:
                     self.player = Player(self, col, row)
                 if tile == 'U':
                     PowerUp(self, col, row)
+                if tile == 'M':
+                    Mob(self, col, row)
     #define run method
     def run(self):
         self.playing = True
