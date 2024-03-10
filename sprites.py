@@ -17,6 +17,7 @@ class Player(pg.sprite.Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.speed = PLAYER_SPEED
+        self.money = 0
 
     # def move(self, dx=0, dy=0):
     #     self.x += dx
@@ -61,6 +62,8 @@ class Player(pg.sprite.Sprite):
         if hits:
             if str(hits[0].__class__.__name__) == "PowerUp":
                 self.speed += 200
+            if str(hits[0].__class__.__name__) == "Coin":
+                self.money += 1
 
 
     def update(self):
@@ -76,6 +79,7 @@ class Player(pg.sprite.Sprite):
         # y collision
         self.collide_with_walls('y')
         self.collide_with_group(self.game.power_ups, True)
+        self.collide_with_group(self.game.coins, True)
 
 #create a wall class
 class Wall(pg.sprite.Sprite):
@@ -148,3 +152,14 @@ class Mob(pg.sprite.Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
+class Coin(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.coins
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.coin_img
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
