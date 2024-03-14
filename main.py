@@ -2,7 +2,7 @@
 # my first source control edit
 # importing libraries
 
-# Goals: waves of enemies, weapons, currency
+# Goals: currency, enemy, hitpoints
 
 import pygame as pg
 import sys
@@ -29,6 +29,7 @@ class Game:
         img_folder = path.join(game_folder, 'images')
         self.player_img = pg.image.load(path.join(img_folder, 'dragon.png')).convert_alpha()
         self.coin_img = pg.image.load(path.join(img_folder, 'coin.png')).convert_alpha()
+        self.mob_img = pg.image.load(path.join(img_folder, 'bomb.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
