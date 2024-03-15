@@ -10,7 +10,8 @@ from settings import *
 from sprites import *
 from random import randint
 from os import path
-from time import sleep
+from math import floor
+from utils import *
 
 #create game class
 class Game:
@@ -19,8 +20,11 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
+        # setting game clock 
         self.clock = pg.time.Clock()
-        pg.key.set_repeat(500, 100)
+        # self.load_data()
+        self.running = True
+        self.paused = False
         self.load_data()
     # load save game data
     def load_data(self):
@@ -38,6 +42,8 @@ class Game:
                 print(enumerate(self.map_data))
 
     def new(self):
+        # create timer
+        self.cooldown = Timer()
         # init all variables, setup groups, instantiate classes
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
@@ -76,6 +82,7 @@ class Game:
     #updating sprites
     def update(self):
         self.all_sprites.update()
+        self.cooldown.ticking()
 
     # drawing background
     def draw_grid(self):
@@ -83,19 +90,25 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+    # drawing text
     def draw_text(self, surface, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
-        text_rect.topleft = (x*TILESIZE,y*TILESIZE)
+        text_rect.topleft = (x,y)
         surface.blit(text_surface, text_rect)
+    
+    # drawing everything
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-        self.draw_text(self.screen, str(self.player.money), 64, WHITE, 1, 1)
+        self.draw_text(self.screen, str(self.cooldown.current_time), 48, WHITE, WIDTH/2 - 32, 2)
+        self.draw_text(self.screen, str(self.cooldown.event_time), 48, WHITE, WIDTH/2 - 32, 80)
+        self.draw_text(self.screen, str(self.cooldown.get_countdown()), 48, WHITE, WIDTH/2 - 32, 120)
+        pg.display.flip()
     #events
     def events(self):
         for event in pg.event.get():
@@ -112,13 +125,28 @@ class Game:
             #         self.player.move(dy=1)
 
     def show_start_screen(self):
-        pass
+        self.screen.fill(BGCOLOR)
+        self.draw_text(self.screen, "This is the start screen", 64, WHITE, WIDTH/2 - 224, HEIGHT/2 - 64)
+        pg.display.flip()
+        self.wait_for_key()
+
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    waiting = False
 
     def show_go_screen(self):
         pass
 
 g = Game()
-# g.show_start_screen()
+
+g.show_start_screen()
 while True:
     g.new()
     g.run()

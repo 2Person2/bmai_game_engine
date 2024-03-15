@@ -3,7 +3,7 @@ TITLE = "my goated game"
 
 FPS = 30
 
-PLAYER_SPEED = 300
+PLAYER_SPEED = 275
 
 # this 32 grids wide
 WIDTH = 1024
