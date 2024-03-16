@@ -12,6 +12,9 @@ from random import randint
 from os import path
 from time import sleep
 
+LEVEL1 = "level1.txt"
+LEVEL2 = "level2.txt"
+
 #create game class
 class Game:
     # initializing attributes
@@ -27,18 +30,42 @@ class Game:
         self.load_data()
     # load save game data
     def load_data(self):
-        game_folder = path.dirname(__file__)
-        # added image
-        img_folder = path.join(game_folder, 'images')
-        self.player_img = pg.image.load(path.join(img_folder, 'dragon.png')).convert_alpha()
-        self.coin_img = pg.image.load(path.join(img_folder, 'coin.png')).convert_alpha()
-        self.mob_img = pg.image.load(path.join(img_folder, 'bomb.png')).convert_alpha()
+        self.game_folder = path.dirname(__file__)
+        self.img_folder = path.join(self.game_folder, 'images')
+        self.player_img = pg.image.load(path.join(self.img_folder, 'dragon.png')).convert_alpha()
+        self.coin_img = pg.image.load(path.join(self.img_folder, 'coin.png')).convert_alpha()
+        self.mob_img = pg.image.load(path.join(self.img_folder, 'bomb.png')).convert_alpha()
         self.map_data = []
-        with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+        with open(path.join(self.game_folder, 'LEVEL1.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
-                print(self.map_data)
-                print(enumerate(self.map_data))
+
+    def change_level(self, lvl):
+        # kill all existing sprites first to save memory
+        self.lvl = lvl
+        for s in self.all_sprites:
+            s.kill()
+        # reset criteria for changing level
+        self.player.money = 0
+        # reset map data list to empty
+        self.map_data = []
+        # open next level
+        with open(path.join(self.game_folder, self.lvl), 'rt') as f:
+            for line in f:
+                self.map_data.append(line)
+        # repopulate the level with stuff
+        for row, tiles in enumerate(self.map_data):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    Wall(self, col, row)
+                if tile == 'P':
+                    self.player = Player(self, col, row)
+                if tile == 'C':
+                    Coin(self, col, row)
+                if tile == 'M':
+                    Mob(self, col, row)
+                if tile == 'U':
+                    PowerUp(self, col, row)
 
     def new(self):
         # init all variables, setup groups, instantiate classes
@@ -77,7 +104,9 @@ class Game:
         if self.player.lives == 0:
             self.show_death_screen()
         if self.player.money == 10:
-            self.show_win_screen()
+            self.change_level(LEVEL2)
+        if self.player.money == 11:
+            self.show_win_screen
 
 
     # drawing background
@@ -101,7 +130,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-        self.draw_text(self.screen, "Progress: "+str(self.player.money*10)+"%", 48, WHITE, 1, 1)
+        self.draw_text(self.screen, "Progress: "+str(self.player.money*10)+"%", 48, BLACK, 1, 1)
         pg.display.flip()
     #events
     def events(self):
@@ -120,13 +149,14 @@ class Game:
         self.draw_text(self.screen, "YOU DIED", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
         pg.display.flip()
         sleep(2)
+        level = 1
         self.wait_for_key()
 
     def show_win_screen(self):
         self.screen.fill(BGCOLOR)
         self.draw_text(self.screen, "YOU WON", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
         pg.display.flip()
-        sleep(5)
+        sleep(3)
         self.wait_for_key()
 
     def wait_for_key(self):
@@ -140,7 +170,6 @@ class Game:
                 if event.type == pg.KEYUP:
                     waiting = False
                     self.new()
-                    self.player.money = 0
 
 g = Game()
 
