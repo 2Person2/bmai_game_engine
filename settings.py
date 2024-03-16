@@ -1,9 +1,9 @@
 # This file was created by: Brandon Mai
 TITLE = "my goated game"
 
-FPS = 30
+FPS = 120
 
-PLAYER_SPEED = 275
+PLAYER_SPEED = 300
 
 # this 32 grids wide
 WIDTH = 1024

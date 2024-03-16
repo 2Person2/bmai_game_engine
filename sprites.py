@@ -39,6 +39,7 @@ class Player(pg.sprite.Sprite):
         self.y = y * TILESIZE
         self.speed = PLAYER_SPEED
         self.money = 0
+        self.lives = 1
 
     # def move(self, dx=0, dy=0):
     #     self.x += dx
@@ -85,6 +86,8 @@ class Player(pg.sprite.Sprite):
                 self.speed += 200
             if str(hits[0].__class__.__name__) == "Coin":
                 self.money += 1
+            if str(hits[0].__class__.__name__) == "Mob":
+                self.lives -= 1
 
 
     def update(self):
@@ -101,6 +104,7 @@ class Player(pg.sprite.Sprite):
         self.collide_with_walls('y')
         self.collide_with_group(self.game.power_ups, True)
         self.collide_with_group(self.game.coins, True)
+        self.collide_with_group(self.game.mobs, True)
 
 #create a wall class
 class Wall(pg.sprite.Sprite):
@@ -143,9 +147,9 @@ class Mob(pg.sprite.Sprite):
         self.acc = vec(0, 0)
         self.rect.center = self.pos
         self.rot = 0
-        self.chase_distance = 500
+        self.chase_distance = 1000
         # added
-        self.speed = 350
+        self.speed = 400
         self.chasing = False
         # self.health = MOB_HEALTH
     def sensor(self):

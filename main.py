@@ -2,7 +2,7 @@
 # my first source control edit
 # importing libraries
 
-# Goals: currency, enemy, hitpoints
+# Goals: completion, enemy, hitpoints
 
 import pygame as pg
 import sys
@@ -10,8 +10,7 @@ from settings import *
 from sprites import *
 from random import randint
 from os import path
-from math import floor
-from utils import *
+from time import sleep
 
 #create game class
 class Game:
@@ -42,21 +41,14 @@ class Game:
                 print(enumerate(self.map_data))
 
     def new(self):
-        # create timer
-        self.cooldown = Timer()
         # init all variables, setup groups, instantiate classes
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.power_ups = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.coins = pg.sprite.Group()
-        # self.player = Player(self, 10, 10)
-        # for x in range(10, 20):
-        #     Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
-                # print(col)
-                # print(tiles)
                 if tile == '1':
                     Wall(self, col, row)
                 if tile == 'P':
@@ -82,7 +74,11 @@ class Game:
     #updating sprites
     def update(self):
         self.all_sprites.update()
-        self.cooldown.ticking()
+        if self.player.lives == 0:
+            self.show_death_screen()
+        if self.player.money == 10:
+            self.show_win_screen()
+
 
     # drawing background
     def draw_grid(self):
@@ -105,29 +101,32 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-        self.draw_text(self.screen, str(self.cooldown.current_time), 48, WHITE, WIDTH/2 - 32, 2)
-        self.draw_text(self.screen, str(self.cooldown.event_time), 48, WHITE, WIDTH/2 - 32, 80)
-        self.draw_text(self.screen, str(self.cooldown.get_countdown()), 48, WHITE, WIDTH/2 - 32, 120)
+        self.draw_text(self.screen, "Progress: "+str(self.player.money*10)+"%", 48, WHITE, 1, 1)
         pg.display.flip()
     #events
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
-            # if event.type == pg.KEYDOWN:
-            #     if event.key == pg.K_LEFT:
-            #         self.player.move(dx=-1)
-            #     if event.key == pg.K_RIGHT:
-            #         self.player.move(dx=1)
-            #     if event.key == pg.K_UP:
-            #         self.player.move(dy=-1)
-            #     if event.key == pg.K_DOWN:
-            #         self.player.move(dy=1)
 
     def show_start_screen(self):
         self.screen.fill(BGCOLOR)
-        self.draw_text(self.screen, "This is the start screen", 64, WHITE, WIDTH/2 - 224, HEIGHT/2 - 64)
+        self.draw_text(self.screen, "PRESS ANY KEY TO START", 64, WHITE, 192, HEIGHT/2 - 64)
         pg.display.flip()
+        self.wait_for_key()
+    
+    def show_death_screen(self):
+        self.screen.fill(BGCOLOR)
+        self.draw_text(self.screen, "YOU DIED", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
+        pg.display.flip()
+        sleep(2)
+        self.wait_for_key()
+
+    def show_win_screen(self):
+        self.screen.fill(BGCOLOR)
+        self.draw_text(self.screen, "YOU WON", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
+        pg.display.flip()
+        sleep(5)
         self.wait_for_key()
 
     def wait_for_key(self):
@@ -140,9 +139,8 @@ class Game:
                     self.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
-
-    def show_go_screen(self):
-        pass
+                    self.new()
+                    self.player.money = 0
 
 g = Game()
 
