@@ -149,7 +149,7 @@ class Mob(pg.sprite.Sprite):
         self.rot = 0
         self.chase_distance = 1000
         # added
-        self.speed = 375
+        self.speed = 380
         self.chasing = False
         # self.health = MOB_HEALTH
     def sensor(self):

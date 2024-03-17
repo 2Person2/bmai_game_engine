@@ -131,7 +131,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-        self.draw_text(self.screen, "Progress: "+str(self.player.money*10)+"%", 48, BLACK, 1, 1)
+        self.draw_text(self.screen, "Progress: "+str(round(self.player.money*100/22, 2))+"%", 48, BLACK, 1, 1)
         pg.display.flip()
     #events
     def events(self):
@@ -142,7 +142,7 @@ class Game:
     def show_start_screen(self):
         self.screen.fill(BGCOLOR)
         self.draw_text(self.screen, "PRESS ANY KEY TO START", 64, WHITE, 192, HEIGHT/2-96)
-        self.draw_text(self.screen, "REACH 220% TO WIN", 64, WHITE, 256, HEIGHT/2-32)
+        self.draw_text(self.screen, "REACH 100% TO WIN", 64, WHITE, 256, HEIGHT/2-32)
         pg.display.flip()
         self.wait_for_key()
     
