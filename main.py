@@ -2,7 +2,7 @@
 # my first source control edit
 # importing libraries
 
-# Goals: completion, enemy, hitpoints
+# Goals: coins, enemy, levels
 
 import pygame as pg
 import sys
@@ -105,8 +105,9 @@ class Game:
             self.show_death_screen()
         if self.player.money == 10:
             self.change_level(LEVEL2)
-        if self.player.money == 11:
-            self.show_win_screen
+            self.player.money = 11
+        if self.player.money == 22:
+            self.show_win_screen()
 
 
     # drawing background
@@ -140,7 +141,8 @@ class Game:
 
     def show_start_screen(self):
         self.screen.fill(BGCOLOR)
-        self.draw_text(self.screen, "PRESS ANY KEY TO START", 64, WHITE, 192, HEIGHT/2 - 64)
+        self.draw_text(self.screen, "PRESS ANY KEY TO START", 64, WHITE, 192, HEIGHT/2-96)
+        self.draw_text(self.screen, "REACH 220% TO WIN", 64, WHITE, 256, HEIGHT/2-32)
         pg.display.flip()
         self.wait_for_key()
     
