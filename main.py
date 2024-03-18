@@ -14,6 +14,7 @@ from time import sleep
 
 LEVEL1 = "level1.txt"
 LEVEL2 = "level2.txt"
+LEVEL3 = "level3.txt"
 
 #create game class
 class Game:
@@ -103,10 +104,13 @@ class Game:
         self.all_sprites.update()
         if self.player.lives == 0:
             self.show_death_screen()
-        if self.player.money == 10:
+        if self.player.money == 10 and self.player.level == 1:
             self.change_level(LEVEL2)
-            self.player.money = 11
-        if self.player.money == 22:
+            self.player.level = 2
+        if self.player.money == 10 and self.player.level == 2:
+            self.change_level(LEVEL3)
+            self.player.level = 3
+        if self.player.money == 10 and self.player.level == 3:
             self.show_win_screen()
 
 
@@ -131,7 +135,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-        self.draw_text(self.screen, "Progress: "+str(round(self.player.money*100/22, 2))+"%", 48, BLACK, 1, 1)
+        self.draw_text(self.screen, "Progress: "+str(round(self.player.money*10))+"%", 48, BLACK, 1, 1)
         pg.display.flip()
     #events
     def events(self):
@@ -139,6 +143,7 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
 
+    # start screen
     def show_start_screen(self):
         self.screen.fill(BGCOLOR)
         self.draw_text(self.screen, "PRESS ANY KEY TO START", 64, WHITE, 192, HEIGHT/2-96)
@@ -146,6 +151,7 @@ class Game:
         pg.display.flip()
         self.wait_for_key()
     
+    # death screen
     def show_death_screen(self):
         self.screen.fill(BGCOLOR)
         self.draw_text(self.screen, "YOU DIED", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
@@ -154,6 +160,7 @@ class Game:
         level = 1
         self.wait_for_key()
 
+    # win screen
     def show_win_screen(self):
         self.screen.fill(BGCOLOR)
         self.draw_text(self.screen, "YOU WON", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
@@ -161,6 +168,7 @@ class Game:
         sleep(3)
         self.wait_for_key()
 
+    # press key to move on
     def wait_for_key(self):
         waiting = True
         while waiting:
@@ -180,5 +188,3 @@ while True:
     g.new()
     g.run()
     # g.show_go_screen()
-
-g.run()
