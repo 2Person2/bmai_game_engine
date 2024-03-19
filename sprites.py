@@ -7,7 +7,7 @@ from settings import *
 
 vec =pg.math.Vector2
 
-#create a player class
+# defining collide with walls function
 def collide_with_walls(sprite, group, dir):
     if dir == 'x':
         hits = pg.sprite.spritecollide(sprite, group, False)
@@ -27,8 +27,10 @@ def collide_with_walls(sprite, group, dir):
                 sprite.pos.y = hits[0].rect.bottom + sprite.rect.height / 2
             sprite.vel.y = 0
             sprite.rect.centery = sprite.pos.y
+# create player class
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
+        # initialize all variables
         self.groups = game.all_sprites
         self.level = 1
         Sprite.__init__(self, self.groups)
@@ -60,6 +62,7 @@ class Player(pg.sprite.Sprite):
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071
             self.vy *= 0.7071
+    # player collision with walls function
     def collide_with_walls(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
@@ -90,7 +93,7 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Mob":
                 self.lives -= 1
 
-
+    # updating player function
     def update(self):
         # self.rect.x = self.x * TILESIZE
         # self.rect.y = self.y * TILESIZE
@@ -127,8 +130,7 @@ class PowerUp(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.power_ups
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(RED)
+        self.image = self.game.speed_img
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -138,6 +140,7 @@ class PowerUp(pg.sprite.Sprite):
 # mob class
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, x, y):
+        # initializing variables
         self.groups = game.all_sprites, game.mobs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -148,30 +151,27 @@ class Mob(pg.sprite.Sprite):
         self.acc = vec(0, 0)
         self.rect.center = self.pos
         self.rot = 0
-        self.chase_distance = 1000
-        # added
-        self.speed = 380
+        # mob speed
+        self.speed = 390
         self.chasing = False
-        # self.health = MOB_HEALTH
+    # mob always chases player
     def sensor(self):
-        if abs(self.rect.x - self.game.player.rect.x) < self.chase_distance and abs(self.rect.y - self.game.player.rect.y) < self.chase_distance:
-            self.chasing = True
-        else:
-            self.chasing = False
+        self.chasing = True
+
     def update(self):
         self.sensor()
         if self.chasing:
+            # calculates angle to player
             self.rot = (self.game.player.rect.center - self.pos).angle_to(vec(1, 0))
-            # self.image = pg.transform.rotate(self.image, 45)
-            # self.rect = self.image.get_rect()
             self.rect.center = self.pos
+            # rotates to player
             self.acc = vec(self.speed, 0).rotate(-self.rot)
-            self.acc += self.vel * -1
+            # simulating acceleration
+            self.acc += self.vel * -0.9
             self.vel += self.acc * self.game.dt
-            self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
-            # self.hit_rect.centerx = self.pos.x
+            # simulating deceleration during a turn
+            self.pos += self.vel * self.game.dt + 0.55 * self.acc * self.game.dt ** 2
             collide_with_walls(self, self.game.walls, 'x')
-            # self.hit_rect.centery = self.pos.y
             collide_with_walls(self, self.game.walls, 'y')
 class Coin(pg.sprite.Sprite):
     def __init__(self, game, x, y):

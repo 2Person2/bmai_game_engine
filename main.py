@@ -1,4 +1,5 @@
 # This file was created by: Brandon Mai
+# Inspiration from: Chris Cozort
 # my first source control edit
 # importing libraries
 
@@ -32,11 +33,14 @@ class Game:
     # load save game data
     def load_data(self):
         self.game_folder = path.dirname(__file__)
+        # loading images
         self.img_folder = path.join(self.game_folder, 'images')
         self.player_img = pg.image.load(path.join(self.img_folder, 'dragon.png')).convert_alpha()
         self.coin_img = pg.image.load(path.join(self.img_folder, 'coin.png')).convert_alpha()
         self.mob_img = pg.image.load(path.join(self.img_folder, 'bomb.png')).convert_alpha()
+        self.speed_img = pg.image.load(path.join(self.img_folder, 'speed.png')).convert_alpha()
         self.map_data = []
+        # loading level 1 map
         with open(path.join(self.game_folder, 'LEVEL1.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
