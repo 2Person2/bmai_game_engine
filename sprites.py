@@ -1,5 +1,5 @@
 # This file was created by: Brandon Mai
-
+# inspiration from: Chris Cozort
 #import modules
 import pygame as pg
 from pygame.sprite import Sprite
@@ -152,14 +152,11 @@ class Mob(pg.sprite.Sprite):
         self.rect.center = self.pos
         self.rot = 0
         # mob speed
-        self.speed = 390
-        self.chasing = False
+        self.speed = 400
     # mob always chases player
-    def sensor(self):
         self.chasing = True
 
     def update(self):
-        self.sensor()
         if self.chasing:
             # calculates angle to player
             self.rot = (self.game.player.rect.center - self.pos).angle_to(vec(1, 0))
@@ -167,7 +164,7 @@ class Mob(pg.sprite.Sprite):
             # rotates to player
             self.acc = vec(self.speed, 0).rotate(-self.rot)
             # simulating acceleration
-            self.acc += self.vel * -0.9
+            self.acc += self.vel * -0.5
             self.vel += self.acc * self.game.dt
             # simulating deceleration during a turn
             self.pos += self.vel * self.game.dt + 0.55 * self.acc * self.game.dt ** 2
