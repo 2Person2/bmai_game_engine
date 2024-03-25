@@ -164,7 +164,7 @@ class Mob(pg.sprite.Sprite):
             # rotates to player
             self.acc = vec(self.speed, 0).rotate(-self.rot)
             # simulating acceleration
-            self.acc += self.vel * -0.5
+            self.acc += self.vel * 0.1
             self.vel += self.acc * self.game.dt
             # simulating deceleration during a turn
             self.pos += self.vel * self.game.dt + 0.55 * self.acc * self.game.dt ** 2
