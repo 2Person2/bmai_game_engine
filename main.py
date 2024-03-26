@@ -13,9 +13,12 @@ from random import randint
 from os import path
 from time import sleep
 
-LEVEL1 = "level1.txt"
-LEVEL2 = "level2.txt"
-LEVEL3 = "level3.txt"
+LEVEL1_EASY = "level1_easy.txt"
+LEVEL2_EASY = "level2_easy.txt"
+LEVEL3_EASY = "level3_easy.txt"
+LEVEL1_HARD = "level1_hard.txt"
+LEVEL2_HARD = "level2_hard.txt"
+LEVEL3_HARD = "level3_hard.txt"
 
 #create game class
 class Game:
@@ -40,8 +43,8 @@ class Game:
         self.mob_img = pg.image.load(path.join(self.img_folder, 'bomb.png')).convert_alpha()
         self.speed_img = pg.image.load(path.join(self.img_folder, 'speed.png')).convert_alpha()
         self.map_data = []
-        # loading level 1 map
-        with open(path.join(self.game_folder, 'LEVEL1.txt'), 'rt') as f:
+        # loading maps
+        with open(path.join(self.game_folder, 'LEVEL1_EASY.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
 
@@ -108,11 +111,19 @@ class Game:
         self.all_sprites.update()
         if self.player.lives == 0:
             self.show_death_screen()
+        if self.player.money == 10 and self.player.level == 1:
+            self.change_level(LEVEL2_EASY)
+            self.player.level = 2
+        if self.player.money == 10 and self.player.level == 2:
+            self.change_level(LEVEL3_EASY)
+            self.player.level = 3
+        if self.player.money == 10 and self.player.level == 3:
+            self.show_win_screen()
         if self.player.money == 10 and self.player.level == 7:
-            self.change_level(LEVEL2)
+            self.change_level(LEVEL2_HARD)
             self.player.level = 8
         if self.player.money == 10 and self.player.level == 8:
-            self.change_level(LEVEL3)
+            self.change_level(LEVEL3_HARD)
             self.player.level = 9
         if self.player.money == 10 and self.player.level == 9:
             self.show_win_screen()
@@ -157,6 +168,14 @@ class Game:
         self.draw_text(self.screen, "START", 64, WHITE, 450, 340)  # Adjust position based on button size and text size
         pg.display.flip()
         self.wait_for_key()
+
+    def show_start_screen(self):
+        self.screen.fill(BGCOLOR)
+        self.draw_text(self.screen, "PRESS 1 FOR EASY", 64, WHITE, 265, 250)
+        self.draw_text(self.screen, "PRESS 2 FOR MEDIUM", 64, WHITE, 230, 340)
+        self.draw_text(self.screen, "PRESS 3 FOR HARD", 64, WHITE, 265, 430)
+        pg.display.flip()
+        self.wait_for_key()
     
     # death screen
     def show_death_screen(self):
@@ -164,7 +183,6 @@ class Game:
         self.draw_text(self.screen, "YOU DIED", 64, WHITE, WIDTH/2 - 128, HEIGHT/2 - 64)
         pg.display.flip()
         sleep(2)
-        level = 1
         self.wait_for_key()
 
     # win screen
@@ -195,7 +213,7 @@ class Game:
 
 g = Game()
 
-g.show_start_screen_hard()
+g.show_start_screen()
 while True:
     g.new()
     g.run()
