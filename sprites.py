@@ -32,7 +32,7 @@ class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         # initialize all variables
         self.groups = game.all_sprites
-        self.level = 1
+        self.level = 7
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.player_img

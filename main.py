@@ -108,13 +108,13 @@ class Game:
         self.all_sprites.update()
         if self.player.lives == 0:
             self.show_death_screen()
-        if self.player.money == 10 and self.player.level == 1:
+        if self.player.money == 10 and self.player.level == 7:
             self.change_level(LEVEL2)
-            self.player.level = 2
-        if self.player.money == 10 and self.player.level == 2:
+            self.player.level = 8
+        if self.player.money == 10 and self.player.level == 8:
             self.change_level(LEVEL3)
-            self.player.level = 3
-        if self.player.money == 10 and self.player.level == 3:
+            self.player.level = 9
+        if self.player.money == 10 and self.player.level == 9:
             self.show_win_screen()
 
 
@@ -148,10 +148,13 @@ class Game:
                 self.quit()
 
     # start screen
-    def show_start_screen(self):
+    # start screen
+    def show_start_screen_hard(self):
+        self.start_button = pg.Rect(332, 325, 400, 100)  # Define start_button as an attribute of the class
         self.screen.fill(BGCOLOR)
-        self.draw_text(self.screen, "PRESS ANY KEY TO START", 64, WHITE, 192, HEIGHT/2-96)
-        self.draw_text(self.screen, "REACH 100% TO WIN", 64, WHITE, 256, HEIGHT/2-32)
+        pg.draw.rect(self.screen, RED, self.start_button)
+        # Add text on the button
+        self.draw_text(self.screen, "START", 64, WHITE, 450, 340)  # Adjust position based on button size and text size
         pg.display.flip()
         self.wait_for_key()
     
@@ -184,10 +187,15 @@ class Game:
                 if event.type == pg.KEYUP:
                     waiting = False
                     self.new()
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouse_pos = pg.mouse.get_pos()
+                    if self.start_button.collidepoint(mouse_pos):  # Access start_button using self
+                        waiting = False
+                        self.new()
 
 g = Game()
 
-g.show_start_screen()
+g.show_start_screen_hard()
 while True:
     g.new()
     g.run()
